@@ -1,5 +1,7 @@
-
 namespace HackerNews.BestStories.Api;
+
+using Clients;
+using Services;
 
 public class Program
 {
@@ -10,8 +12,15 @@ public class Program
         // Add services to the container.
 
         builder.Services.AddControllers();
+
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
+
+        builder.Services
+            .AddHttpClient<IHackerNewsClient, HackerNewsClient>()
+            .AddStandardResilienceHandler();
+
+        builder.Services.AddScoped<IHackerNewsService, HackerNewsService>();
 
         var app = builder.Build();
 
@@ -24,7 +33,6 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-
 
         app.MapControllers();
 
