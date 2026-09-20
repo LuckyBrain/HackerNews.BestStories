@@ -1,0 +1,16 @@
+**/bin/
+**/obj/
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.ncrunch*
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+*.trx
+.DS_Store
+
+.github/
