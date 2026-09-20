@@ -1,8 +1,8 @@
-﻿namespace HackerNews.BestStories.Api.UnitTests;
+﻿namespace HackerNews.BestStories.Api.UnitTests.Clients;
 
 using System.Net;
 using System.Net.Http.Json;
-using Clients;
+using Api.Clients;
 using Exceptions;
 using Helpers;
 using Microsoft.Extensions.DependencyInjection;
