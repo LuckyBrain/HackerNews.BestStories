@@ -2,6 +2,7 @@ namespace HackerNews.BestStories.Api;
 
 using Adapters;
 using Clients;
+using ErrorHandling;
 using Microsoft.Extensions.Caching.Hybrid;
 using Services;
 
@@ -17,6 +18,9 @@ public class Program
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
+
+        builder.Services.AddProblemDetails();
+        builder.Services.AddExceptionHandler<HackerNewsExceptionHandler>();
 
         builder.Services.AddHybridCache();
 
@@ -37,6 +41,8 @@ public class Program
             .AddScoped<ICompactStoriesService, CompactStoriesService>();
 
         var app = builder.Build();
+
+        app.UseExceptionHandler();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
