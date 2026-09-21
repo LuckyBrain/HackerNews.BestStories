@@ -7,7 +7,7 @@ public class DtoFactory
     private static readonly DateTimeOffset _storyDateTimeOffset = new(2019, 10, 12, 13, 43, 1, TimeSpan.Zero);
     private static readonly long _unixStoryTime = _storyDateTimeOffset.ToUnixTimeSeconds();
 
-    public static StoryDto CreateStory(long id, int score)
+    public static StoryDto CreateStory(long id, int score = 100)
     {
         return new StoryDto(
             id,

@@ -2,6 +2,7 @@ namespace HackerNews.BestStories.Api;
 
 using Adapters;
 using Clients;
+using Microsoft.Extensions.Caching.Hybrid;
 using Services;
 
 public class Program
@@ -17,11 +18,20 @@ public class Program
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
 
+        builder.Services.AddHybridCache();
+
         builder.Services
-            .AddHttpClient<IHackerNewsClient, HackerNewsClient>()
+            .AddHttpClient<HackerNewsClient>()
             .AddStandardResilienceHandler();
 
         builder.Services
+            .AddScoped<IHackerNewsClient>(
+                serviceProvider =>
+                {
+                    var innerClient = serviceProvider.GetRequiredService<HackerNewsClient>();
+                    var cache = serviceProvider.GetRequiredService<HybridCache>();
+                    return new CachingHackerNewsClient(innerClient, cache);
+                })
             .AddScoped<IHackerNewsService, HackerNewsService>()
             .AddScoped<IStoryAdapter, StoryAdapter>()
             .AddScoped<ICompactStoriesService, CompactStoriesService>();
