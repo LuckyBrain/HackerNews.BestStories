@@ -1,15 +1,15 @@
-﻿namespace HackerNews.BestStories.Api.UnitTests.Helpers;
+﻿namespace HackerNews.BestStories.TestHelpers;
 
-using HackerNews.BestStories.Api.Services;
-using Models;
+using Api.Models;
+using Api.Services;
 
-internal sealed class HackerNewsServiceStub : IHackerNewsService
+public sealed class StubOfHackerNewsService : IHackerNewsService
 {
     private readonly IReadOnlyList<StoryDto> _stories;
 
-    public HackerNewsServiceStub(IReadOnlyList<StoryDto> stories)
+    public StubOfHackerNewsService(IReadOnlyList<StoryDto>? stories = null)
     {
-        _stories = stories;
+        _stories = stories ?? new List<StoryDto>();
     }
 
     public int CallCount { get; private set; }

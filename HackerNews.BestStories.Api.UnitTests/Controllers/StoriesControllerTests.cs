@@ -1,29 +1,16 @@
 ﻿namespace HackerNews.BestStories.Api.UnitTests.Controllers;
 
 using HackerNews.BestStories.Api.Controllers;
-using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using TestHelpers;
 
 public class StoriesControllerTests
 {
-    private static StoryDto CreateStory(long id, int score)
-    {
-        return new StoryDto(
-            id,
-            "test-user",
-            10,
-            score,
-            1758390000,
-            $"Story {id}",
-            "story",
-            $"https://example.com/{id}");
-    }
-
     [Fact]
     public async Task WhenRequestedCountIsLessThanOne_ShouldReturnBadRequest()
     {
-        var service = new HackerNewsServiceStub(new List<StoryDto>());
+        var service = new StubOfHackerNewsService();
         var sut = new StoriesController(service);
 
         var actual = await sut.GetBestStoriesAsync(n: 0);
@@ -36,8 +23,8 @@ public class StoriesControllerTests
     public async Task WhenRequestedCountIsValid_ShouldReturnBestStories()
     {
         const int requestedCount = 2;
-        var expected = new[] { CreateStory(1, 500), CreateStory(2, 400) };
-        var service = new HackerNewsServiceStub(expected);
+        var expected = new[] { DtoFactory.CreateStory(1, 500), DtoFactory.CreateStory(2, 400) };
+        var service = new StubOfHackerNewsService(expected);
         var sut = new StoriesController(service);
 
         var actual = await sut.GetBestStoriesAsync(n: requestedCount);

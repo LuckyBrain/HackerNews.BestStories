@@ -4,9 +4,9 @@ using System.Net;
 using System.Net.Http.Json;
 using Api.Clients;
 using Exceptions;
-using Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Models;
+using TestHelpers;
 
 public class HackerNewsClientTests
 {
@@ -19,7 +19,10 @@ public class HackerNewsClientTests
         private static HttpResponseMessage CreateOkMessage()
         {
             var jsonContent = JsonContent.Create(_expectedStoryIds);
-            var httpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = jsonContent };
+            var httpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = jsonContent
+            };
             return httpResponseMessage;
         }
 
@@ -27,7 +30,7 @@ public class HackerNewsClientTests
         public async Task WhenApiCannotBeReached_ShouldThrow()
         {
             var expectedInnerException = new HttpRequestException("API cannot be reached");
-            var handler = new TestHttpMessageHandlerStub((_, _) => Task.FromException<HttpResponseMessage>(expectedInnerException));
+            var handler = new StubOfHttpMessageHandler((_, _) => Task.FromException<HttpResponseMessage>(expectedInnerException));
             using var httpClient = new HttpClient(handler);
             IHackerNewsClient sut = new HackerNewsClient(httpClient);
 
@@ -42,7 +45,7 @@ public class HackerNewsClientTests
         public async Task WhenApiCanBeReached_WhenRequestFails_WhenAllRetriesFail_ShouldThrow()
         {
             var actualRequestCount = 0;
-            var handler = new TestHttpMessageHandlerStub(
+            var handler = new StubOfHttpMessageHandler(
                 (_, _) =>
                 {
                     actualRequestCount++;
@@ -73,7 +76,7 @@ public class HackerNewsClientTests
         {
             const int ValidRetryNo = 1;
             var actualRequestCount = 0;
-            var handler = new TestHttpMessageHandlerStub(
+            var handler = new StubOfHttpMessageHandler(
                 (_, _) =>
                 {
                     actualRequestCount++;
@@ -106,7 +109,7 @@ public class HackerNewsClientTests
         public async Task WhenApiCanBeReached_WhenRequestSucceeds_ShouldReturnIds()
         {
             var actualRequestCount = 0;
-            var handler = new TestHttpMessageHandlerStub(
+            var handler = new StubOfHttpMessageHandler(
                 (_, _) =>
                 {
                     actualRequestCount++;
@@ -140,19 +143,14 @@ public class HackerNewsClientTests
     {
         private const int MockStoryId = 234;
 
-        private static readonly StoryDto _expectedStoryDto = new(
-            MockStoryId,
-            "test-user",
-            25,
-            100,
-            1758390000,
-            "Test story",
-            "story",
-            "https://example.com");
+        private static readonly StoryDto _expectedStoryDto = DtoFactory.CreateStory(MockStoryId, 100);
 
         private static HttpResponseMessage CreateOkMessage()
         {
-            var httpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK) { Content = JsonContent.Create(_expectedStoryDto) };
+            var httpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = JsonContent.Create(_expectedStoryDto)
+            };
             return httpResponseMessage;
         }
 
@@ -160,7 +158,7 @@ public class HackerNewsClientTests
         public async Task WhenApiCannotBeReached_ShouldThrow()
         {
             var expectedInnerException = new HttpRequestException("API cannot be reached");
-            var handler = new TestHttpMessageHandlerStub((_, _) => Task.FromException<HttpResponseMessage>(expectedInnerException));
+            var handler = new StubOfHttpMessageHandler((_, _) => Task.FromException<HttpResponseMessage>(expectedInnerException));
             using var httpClient = new HttpClient(handler);
             IHackerNewsClient sut = new HackerNewsClient(httpClient);
 
@@ -175,7 +173,7 @@ public class HackerNewsClientTests
         public async Task WhenApiCanBeReached_WhenRequestFails_WhenAllRetriesFail_ShouldThrow()
         {
             var actualRequestCount = 0;
-            var handler = new TestHttpMessageHandlerStub(
+            var handler = new StubOfHttpMessageHandler(
                 (_, _) =>
                 {
                     actualRequestCount++;
@@ -206,7 +204,7 @@ public class HackerNewsClientTests
         {
             const int NotFoundAttempt = 2;
             var actualRequestCount = 0;
-            var handler = new TestHttpMessageHandlerStub(
+            var handler = new StubOfHttpMessageHandler(
                 (_, _) =>
                 {
                     actualRequestCount++;
@@ -240,7 +238,7 @@ public class HackerNewsClientTests
         {
             const int ValidRetryNo = 1;
             var actualRequestCount = 0;
-            var handler = new TestHttpMessageHandlerStub(
+            var handler = new StubOfHttpMessageHandler(
                 (_, _) =>
                 {
                     actualRequestCount++;
@@ -273,7 +271,7 @@ public class HackerNewsClientTests
         public async Task WhenApiCanBeReached_WhenRequestSucceeds_WhenFound_ShouldReturnStory()
         {
             var actualRequestCount = 0;
-            var handler = new TestHttpMessageHandlerStub(
+            var handler = new StubOfHttpMessageHandler(
                 (_, _) =>
                 {
                     actualRequestCount++;

@@ -15,7 +15,7 @@ public sealed class StoriesController : ControllerBase
         _hackerNewsService = hackerNewsService;
     }
 
-    [HttpGet("best")]
+    [HttpGet("best/wide")]
     public async Task<ActionResult<IReadOnlyList<StoryDto>>> GetBestStoriesAsync(
         [FromQuery] int n,
         CancellationToken cancellationToken = default)

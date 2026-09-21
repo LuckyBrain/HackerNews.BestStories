@@ -3,7 +3,7 @@
 using HackerNews.BestStories.Api.Clients;
 using Models;
 using HackerNews.BestStories.Api.Services;
-using Helpers;
+using TestHelpers;
 
 public class HackerNewsServiceTests
 {
@@ -11,23 +11,16 @@ public class HackerNewsServiceTests
 
     private static readonly IReadOnlyDictionary<long, StoryDto> Stories = new Dictionary<long, StoryDto>
     {
-        [1] = CreateStory(1, 100),
-        [2] = CreateStory(2, 500),
-        [3] = CreateStory(3, 200),
-        [4] = CreateStory(4, 400),
+        [1] = DtoFactory.CreateStory(1, 100),
+        [2] = DtoFactory.CreateStory(2, 500),
+        [3] = DtoFactory.CreateStory(3, 200),
+        [4] = DtoFactory.CreateStory(4, 400),
     };
 
-    private static StoryDto CreateStory(long id, int score)
+    private static IHackerNewsService CreateSut()
     {
-        return new StoryDto(
-            id,
-            "test-user",
-            10,
-            score,
-            1758390000,
-            $"Story {id}",
-            "story",
-            $"https://example.com/{id}");
+        IHackerNewsClient client = new StubOfHackerNewsClient(StoryIds, Stories);
+        return new HackerNewsService(client);
     }
 
     [Theory]
@@ -35,8 +28,7 @@ public class HackerNewsServiceTests
     [InlineData(-1)]
     public async Task WhenRequestedCountIsLessThanOne_ShouldThrow(int requestedCount)
     {
-        IHackerNewsClient client = new HackerNewsClientStub(StoryIds, Stories);
-        IHackerNewsService sut = new HackerNewsService(client);
+        var sut = CreateSut();
 
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => sut.GetBestStoriesAsync(requestedCount));
     }
@@ -44,9 +36,8 @@ public class HackerNewsServiceTests
     [Fact]
     public async Task WhenStoriesAreReturned_ShouldReturnTopCountOrderedByScore()
     {
-        IHackerNewsClient client = new HackerNewsClientStub(StoryIds, Stories);
-        IHackerNewsService sut = new HackerNewsService(client);
-        var expected = new[] { Stories[2], Stories[4] };
+        var sut = CreateSut();
+        var expected = new[] { DtoFactory.CreateStory(2, 500), DtoFactory.CreateStory(4, 400) };
 
         var actual = await sut.GetBestStoriesAsync(requestedCount: 2);
 
@@ -56,9 +47,8 @@ public class HackerNewsServiceTests
     [Fact]
     public async Task WhenRequestedCountExceedsAvailableStories_ShouldReturnAllStoriesOrderedByScore()
     {
-        IHackerNewsClient client = new HackerNewsClientStub(StoryIds, Stories);
-        IHackerNewsService sut = new HackerNewsService(client);
-        var expected = new[] { Stories[2], Stories[4], Stories[3], Stories[1] };
+        var sut = CreateSut();
+        var expected = new[] { DtoFactory.CreateStory(2, 500), DtoFactory.CreateStory(4, 400), DtoFactory.CreateStory(3, 200), DtoFactory.CreateStory(1, 100) };
 
         var actual = await sut.GetBestStoriesAsync(requestedCount: 10);
 

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Models;
 using Services;
+using TestHelpers;
 
 public class StoriesEndpointIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
 {
@@ -20,11 +21,11 @@ public class StoriesEndpointIntegrationTests : IClassFixture<WebApplicationFacto
     [Fact]
     public async Task WhenRequestedCountIsLessThanOne_ShouldReturnBadRequest()
     {
-        var service = new HackerNewsServiceStub(new List<StoryDto>());
+        var service = new StubOfHackerNewsService();
 
         using var client = CreateClient(service);
 
-        var response = await client.GetAsync("/api/stories/best?n=0");
+        var response = await client.GetAsync("/api/stories/best/wide?n=0");
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.Equal(0, service.CallCount);
@@ -34,13 +35,13 @@ public class StoriesEndpointIntegrationTests : IClassFixture<WebApplicationFacto
     public async Task WhenRequestedCountIsValid_ShouldReturnBestStories()
     {
         const int requestedCount = 2;
-        var expected = new[] { CreateStory(1, 500), CreateStory(2, 400) };
+        var expected = new[] { DtoFactory.CreateStory(1, 500), DtoFactory.CreateStory(2, 400) };
 
-        var service = new HackerNewsServiceStub(expected);
+        var service = new StubOfHackerNewsService(expected);
 
         using var client = CreateClient(service);
 
-        var response = await client.GetAsync($"/api/stories/best?n={requestedCount}");
+        var response = await client.GetAsync($"/api/stories/best/wide?n={requestedCount}");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -67,44 +68,5 @@ public class StoriesEndpointIntegrationTests : IClassFixture<WebApplicationFacto
             });
 
         return factory.CreateClient();
-    }
-
-    private static StoryDto CreateStory(long id, int score)
-    {
-        return new StoryDto(
-            id,
-            "test-user",
-            10,
-            score,
-            1758390000,
-            $"Story {id}",
-            "story",
-            $"https://example.com/{id}");
-    }
-
-    private sealed class HackerNewsServiceStub
-        : IHackerNewsService
-    {
-        private readonly IReadOnlyList<StoryDto> _stories;
-
-        public HackerNewsServiceStub(
-            IReadOnlyList<StoryDto> stories)
-        {
-            _stories = stories;
-        }
-
-        public int CallCount { get; private set; }
-
-        public int? RequestedCount { get; private set; }
-
-        public Task<IReadOnlyList<StoryDto>> GetBestStoriesAsync(
-            int requestedCount,
-            CancellationToken cancellationToken = default)
-        {
-            CallCount++;
-            RequestedCount = requestedCount;
-
-            return Task.FromResult(_stories);
-        }
     }
 }

@@ -1,14 +1,14 @@
-﻿namespace HackerNews.BestStories.Api.UnitTests.Helpers;
+﻿namespace HackerNews.BestStories.TestHelpers;
 
-using HackerNews.BestStories.Api.Clients;
-using Models;
+using Api.Clients;
+using Api.Models;
 
-internal sealed class HackerNewsClientStub : IHackerNewsClient
+public sealed class StubOfHackerNewsClient : IHackerNewsClient
 {
     private readonly IReadOnlyList<long> _storyIds;
     private readonly IReadOnlyDictionary<long, StoryDto> _stories;
 
-    public HackerNewsClientStub(
+    public StubOfHackerNewsClient(
         IReadOnlyList<long> storyIds,
         IReadOnlyDictionary<long, StoryDto> stories)
     {

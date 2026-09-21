@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HackerNews.BestStories.Api\HackerNews.BestStories.Api.csproj" />
+    <ProjectReference Include="..\HackerNews.BestStories.TestHelpers\HackerNews.BestStories.TestHelpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>

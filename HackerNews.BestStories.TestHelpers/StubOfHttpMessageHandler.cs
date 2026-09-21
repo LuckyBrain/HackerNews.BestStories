@@ -1,10 +1,10 @@
-﻿namespace HackerNews.BestStories.Api.UnitTests.Helpers;
+﻿namespace HackerNews.BestStories.TestHelpers;
 
-internal sealed class TestHttpMessageHandlerStub : HttpMessageHandler
+public sealed class StubOfHttpMessageHandler : HttpMessageHandler
 {
     private readonly Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> _handler;
 
-    public TestHttpMessageHandlerStub(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> handler)
+    public StubOfHttpMessageHandler(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> handler)
     {
         _handler = handler;
     }
