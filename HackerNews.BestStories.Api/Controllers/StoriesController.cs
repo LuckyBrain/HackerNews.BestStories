@@ -20,14 +20,9 @@ public sealed class StoriesController : ControllerBase
         [FromQuery] int n,
         CancellationToken cancellationToken = default)
     {
-        if (n < 1)
-        {
-            return BadRequest("n must be greater than zero.");
-        }
+        if (n < 1) return BadRequest("n must be greater than zero.");
 
-        var stories = await _hackerNewsService.GetBestStoriesAsync(
-            n,
-            cancellationToken);
+        var stories = await _hackerNewsService.GetBestStoriesAsync(n, cancellationToken);
 
         return Ok(stories);
     }

@@ -1,5 +1,6 @@
 namespace HackerNews.BestStories.Api;
 
+using Adapters;
 using Clients;
 using Services;
 
@@ -20,7 +21,10 @@ public class Program
             .AddHttpClient<IHackerNewsClient, HackerNewsClient>()
             .AddStandardResilienceHandler();
 
-        builder.Services.AddScoped<IHackerNewsService, HackerNewsService>();
+        builder.Services
+            .AddScoped<IHackerNewsService, HackerNewsService>()
+            .AddScoped<IStoryAdapter, StoryAdapter>()
+            .AddScoped<ICompactStoriesService, CompactStoriesService>();
 
         var app = builder.Build();
 

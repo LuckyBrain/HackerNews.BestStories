@@ -53,8 +53,7 @@ public class StoriesEndpointIntegrationTests : IClassFixture<WebApplicationFacto
         Assert.Equal(requestedCount, service.RequestedCount);
     }
 
-    private HttpClient CreateClient(
-        IHackerNewsService hackerNewsService)
+    private HttpClient CreateClient(IHackerNewsService hackerNewsService)
     {
         var factory = _factory.WithWebHostBuilder(
             builder =>

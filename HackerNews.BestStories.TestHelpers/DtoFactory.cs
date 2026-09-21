@@ -1,4 +1,4 @@
-﻿namespace HackerNews.BestStories.TestHelpers;
+namespace HackerNews.BestStories.TestHelpers;
 
 using Api.Models;
 
@@ -18,5 +18,16 @@ public class DtoFactory
             $"Story {id}",
             "story",
             $"https://example.com/{id}");
+    }
+
+    public static CompactStoryDto CreateCompactStory(long id, int score)
+    {
+        return new CompactStoryDto(
+            $"Story {id}",
+            $"https://example.com/{id}",
+            "test-user",
+            _storyDateTimeOffset,
+            score,
+            10);
     }
 }

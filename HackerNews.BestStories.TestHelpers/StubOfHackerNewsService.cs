@@ -1,7 +1,7 @@
-﻿namespace HackerNews.BestStories.TestHelpers;
+﻿using HackerNews.BestStories.Api.Models;
+using HackerNews.BestStories.Api.Services;
 
-using Api.Models;
-using Api.Services;
+namespace HackerNews.BestStories.TestHelpers;
 
 public sealed class StubOfHackerNewsService : IHackerNewsService
 {
@@ -9,7 +9,7 @@ public sealed class StubOfHackerNewsService : IHackerNewsService
 
     public StubOfHackerNewsService(IReadOnlyList<StoryDto>? stories = null)
     {
-        _stories = stories ?? new List<StoryDto>();
+        _stories = stories ?? Array.Empty<StoryDto>();
     }
 
     public int CallCount { get; private set; }
@@ -18,7 +18,7 @@ public sealed class StubOfHackerNewsService : IHackerNewsService
 
     public Task<IReadOnlyList<StoryDto>> GetBestStoriesAsync(
         int requestedCount,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         CallCount++;
         RequestedCount = requestedCount;
